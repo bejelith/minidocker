@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+option go_package = "minidocker/pb";
+
+package v1;
+
+//import "google/protobuf/wrappers.proto";
+service Scheduler {
+  rpc Get(GetRequest) returns (GetResponse);
+  rpc Start(CreateRequest) returns (CreateResponse);
+  rpc Stdout(OutputRequest) returns (stream OutputResponse);
+  rpc Stop(StopRequest) returns (StopResponse);
+}
+
+message GetRequest {
+  uint64 pid = 1;
+}
+
+message GetResponse {
+  bool found = 1;
+  uint64 pid = 2;
+  string status = 3;
+}
+
+message ResourceLimits {
+  uint32 cpuPercentage = 1;
+  uint64 memoryMB = 2;
+  uint32 readBPS = 3;
+  uint32 writeBPS = 4;
+}
+
+message CreateRequest {
+  string cmd = 1;
+  repeated string args = 2;
+  ResourceLimits limits = 3;
+}
+
+message CreateResponse {
+  uint64 pid = 1;
+  optional string error = 2;
+}
+
+message OutputRequest {
+  uint64 pid = 1;
+}
+
+message OutputResponse {
+  bytes output = 1;
+}
+
+message StopRequest {
+  uint64 pid = 1;
+}
+
+message StopResponse {
+}
